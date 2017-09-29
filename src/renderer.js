@@ -1,14 +1,14 @@
 import PouchDB from 'pouchdb';
 
-const noteList = document.getElementById('note-list');
-
-for (let i = 1; i <= 100; i += 1) {
-  const item = document.createElement('ul');
-  item.innerText = `Note ${i}`;
-  noteList.appendChild(item);
-}
 
 const db = new PouchDB('http://localhost:5984/test');
+
+/**
+ * @returns {Promise<any>}
+ */
+function getAllNotes() {
+  return db.allDocs({ include_docs: true }).then(result => result.rows.map(row => row.doc));
+}
 
 /**
  * returns null when a note is not found
@@ -101,6 +101,15 @@ function updateNote(id, title, body) {
     }).catch(() => Promise.reject('Error in updating a note'));
   });
 }
+
+const noteList = document.getElementById('note-list');
+getAllNotes().then(notes => {
+  notes.forEach(note => {
+    const item = document.createElement('ul');
+    item.innerText = note.title;
+    noteList.appendChild(item);
+  });
+});
 
 addNote('TITLE', 'BODY\nLINE2').then(resp => {
   const id = resp.id;
