@@ -11,6 +11,7 @@
               }
             }
           ],
+          "flow",
           "react"
         ],
         "plugins": [
@@ -30,6 +31,7 @@
               }
             }
           ],
+          "flow",
           "react"
         ],
         "plugins": [
