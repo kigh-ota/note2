@@ -4,6 +4,7 @@
   "description": "My Electron application description",
   "main": "app/main.js",
   "scripts": {
+    "lint": "tslint --project tsconfig.json --type-check --force",
     "build": "webpack --colors",
     "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -17,6 +18,7 @@
   "devDependencies": {
     "electron": "^1.7.8",
     "ts-loader": "^2.3.7",
+    "tslint": "^5.7.0",
     "typescript": "^2.5.3",
     "webpack": "^3.6.0"
   }
