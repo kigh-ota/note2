@@ -28,6 +28,10 @@ li {
 
 li:hover {
     cursor: pointer;
+    background-color: skyblue;
+}
+
+li.opened-note {
     background-color: lightskyblue;
 }
 
@@ -69,6 +73,7 @@ li:hover {
 
 #note-tags {
     height: 40px;
+    background-color: lightgray;
 }
 
 #note-body {
