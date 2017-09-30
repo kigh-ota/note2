@@ -1,27 +1,27 @@
 import NoteRepository from './NoteRepository';
 import * as $ from 'jquery';
+import NoteList from './NoteList';
 
 const repository: NoteRepository = new NoteRepository();
+
+export function getRepository(): NoteRepository {
+  return repository;
+}
 
 const titleInput: HTMLInputElement = document.getElementById('note-title-input') as HTMLInputElement;
 const bodyInput: HTMLTextAreaElement = document.getElementById('note-body-input') as HTMLTextAreaElement;
 const deleteButton: JQuery = $('#note-delete-button');
-const noteList: HTMLUListElement = document.querySelector('#note-list > ul') as HTMLUListElement;
+const noteList: NoteList =  new NoteList();
 const statusBar: HTMLElement = document.getElementById('status-bar-inner') as HTMLElement;
-
-function clearNoteList(): void {
-  noteList.innerHTML = '';
-}
 
 let openedNoteId: string|null = null;
 
-function highlightOpenedNote(): void {
-  $(noteList).find('li').removeClass('opened-note');
-  $(noteList).find(`li[data-id=${openedNoteId}]`).addClass('opened-note');
+export function getOpenedNoteId(): string|null {
+  return openedNoteId;
 }
 
 // open a new note when note parameter is null
-function changeOpenedNote(note: any): void {
+export function changeOpenedNote(note: any): void {
   if (note !== null) {
     openedNoteId = note._id;
     titleInput.value = note.title;
@@ -35,25 +35,6 @@ function changeOpenedNote(note: any): void {
     deleteButton.hide();
     setStatusBar('New Note');
   }
-}
-
-function refreshNoteList(): Promise<any> {
-  clearNoteList();
-  return repository.getAll().then(notes => {
-    notes
-      .sort((a: any, b: any) => a.updatedAt > b.updatedAt ? -1 : 1)
-      .forEach((note: any) => {
-        const item: HTMLLIElement = document.createElement('li') as HTMLLIElement;
-        item.innerText = note.title;
-        item.dataset.id = note._id;
-        item.addEventListener('click', () => {
-          changeOpenedNote(note);
-          highlightOpenedNote();
-        });
-        noteList.appendChild(item);
-      });
-    highlightOpenedNote();
-  });
 }
 
 function getTitle(): string {
@@ -76,14 +57,15 @@ function registerKeyEventHandler(): void {
         return repository.add(getTitle(), getBody()).then(id => {
           openedNoteId = id;
         }).then(() => {
-          return refreshNoteList();
+          return noteList.refresh();
         });
       }
       // TODO prevent updating when not modified
       return repository.update(openedNoteId, getTitle(), getBody()).then(() => {
-        return refreshNoteList();
+        return noteList.refresh();
       });
     }
+    // TODO: Press Ctrl+N to create a new note
     return;
   });
 }
@@ -96,7 +78,7 @@ function setupNoteDeleteButton(): void {
       }
       return repository.remove(openedNoteId).then(() => {
         changeOpenedNote(null);
-        return refreshNoteList();
+        return noteList.refresh();
       });
     }
     return;
@@ -105,5 +87,5 @@ function setupNoteDeleteButton(): void {
 
 registerKeyEventHandler();
 changeOpenedNote(null);
-refreshNoteList();
+noteList.refresh();
 setupNoteDeleteButton();
