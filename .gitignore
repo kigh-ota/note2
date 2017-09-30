@@ -1,5 +1,10 @@
 node_modules
-out
 
 /.idea
 *.iml
+
+.DS_Store
+
+/app/main.js
+/app/**/*.js.map
+/src/**/*.d.ts
