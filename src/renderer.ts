@@ -5,6 +5,7 @@ const repository: NoteRepository = new NoteRepository();
 
 const titleInput: HTMLInputElement = document.getElementById('note-title-input') as HTMLInputElement;
 const bodyInput: HTMLTextAreaElement = document.getElementById('note-body-input') as HTMLTextAreaElement;
+const deleteButton: JQuery = $('#note-delete-button');
 const noteList: HTMLUListElement = document.querySelector('#note-list > ul') as HTMLUListElement;
 const statusBar: HTMLElement = document.getElementById('status-bar-inner') as HTMLElement;
 
@@ -19,6 +20,23 @@ function highlightOpenedNote(): void {
   $(noteList).find(`li[data-id=${openedNoteId}]`).addClass('opened-note');
 }
 
+// open a new note when note parameter is null
+function changeOpenedNote(note: any): void {
+  if (note !== null) {
+    openedNoteId = note._id;
+    titleInput.value = note.title;
+    bodyInput.textContent = note.body;
+    deleteButton.show();
+    setStatusBar(`id: ${note._id}`);
+  } else {
+    openedNoteId = null;
+    titleInput.value = '';
+    bodyInput.textContent = '';
+    deleteButton.hide();
+    setStatusBar('New Note');
+  }
+}
+
 function refreshNoteList(): Promise<any> {
   clearNoteList();
   return repository.getAll().then(notes => {
@@ -29,11 +47,8 @@ function refreshNoteList(): Promise<any> {
         item.innerText = note.title;
         item.dataset.id = note._id;
         item.addEventListener('click', () => {
-          titleInput.value = note.title;
-          bodyInput.textContent = note.body;
-          openedNoteId = note._id;
+          changeOpenedNote(note);
           highlightOpenedNote();
-          setStatusBar(`id: ${note._id}`);
         });
         noteList.appendChild(item);
       });
@@ -73,5 +88,22 @@ function registerKeyEventHandler(): void {
   });
 }
 
+function setupNoteDeleteButton(): void {
+  deleteButton.on('click', () => {
+    if (window.confirm('Delete this note?')) {
+      if (openedNoteId === null) {
+        throw new Error();
+      }
+      return repository.remove(openedNoteId).then(() => {
+        changeOpenedNote(null);
+        return refreshNoteList();
+      });
+    }
+    return;
+  });
+}
+
 registerKeyEventHandler();
+changeOpenedNote(null);
 refreshNoteList();
+setupNoteDeleteButton();

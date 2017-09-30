@@ -66,9 +66,20 @@ li.opened-note {
     flex-direction: column;
 }
 
+#note-title {
+    position: relative;
+}
+
 #note-title-input {
     width: 100%;
     height: 40px;
+}
+
+#note-delete-button {
+    position: absolute;
+    right: 5px;
+    top: 0;
+    bottom: 0;
 }
 
 #note-tags {

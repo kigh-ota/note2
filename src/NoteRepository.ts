@@ -84,4 +84,12 @@ export default class NoteRepository {
       }).catch(() => Promise.reject('Error in updating a note'));
     });
   }
+
+  remove(id: string): Promise<any> {
+    return this.db.get(id).then(note => {
+      return this.db.remove(id, note._rev);
+    }).catch(() => {
+      return Promise.reject('Note not found');
+    });
+  }
 }
