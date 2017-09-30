@@ -1,26 +1,20 @@
 import PouchDB from 'pouchdb';
 
-
 const db = new PouchDB('http://localhost:5984/test');
 
-/**
- * @returns {Promise<any>}
- */
-function getAllNotes() {
+function getAllNotes(): Promise<any> {
   return db.allDocs({ include_docs: true }).then(result => result.rows.map(row => row.doc));
 }
 
 /**
  * returns null when a note is not found
- * @param {string} title
- * @returns {Promise<any>}
  */
-function getNoteByTitle(title) {
+function getNoteByTitle(title: string): Promise<any> {
   if (!title) {
     return Promise.reject('Invalid title');
   }
   return db.allDocs({ include_docs: true }).then((result) => {
-    const matchRow = result.rows.find(row => row.doc.title === title);
+    const matchRow = result.rows.find((row: any) => row.doc.title === title);
     if (matchRow === undefined) {
       return null;
     }
@@ -28,12 +22,7 @@ function getNoteByTitle(title) {
   });
 }
 
-/**
- *
- * @param {string} title
- * @returns {Promise<boolean>}
- */
-function existsNoteWithTitle(title) {
+function existsNoteWithTitle(title: string): Promise<boolean> {
   if (!title) {
     return Promise.reject('Invalid title');
   }
@@ -45,12 +34,7 @@ function existsNoteWithTitle(title) {
   });
 }
 
-/**
- * @param {string} title
- * @param {string} body
- * @returns {Promise<any>}
- */
-function addNote(title, body) {
+function addNote(title: string, body: string): Promise<any> {
   if (!title) {
     return Promise.reject('Invalid title');
   }
@@ -71,13 +55,8 @@ function addNote(title, body) {
   });
 }
 
-/**
- * @param {string} id
- * @param {string} title
- * @param {string} body
- * @returns {Promise<any>}
- */
-function updateNote(id, title, body) {
+/*
+function updateNote(id: string, title: string, body: string): Promise<any> {
   if (!title) {
     Promise.reject('Invalid title');
   }
@@ -101,11 +80,12 @@ function updateNote(id, title, body) {
     }).catch(() => Promise.reject('Error in updating a note'));
   });
 }
+*/
 
-const noteList = document.getElementById('note-list');
+const noteList: HTMLUListElement = document.querySelector('#note-list > ul') as HTMLUListElement;
 getAllNotes().then(notes => {
-  notes.forEach(note => {
-    const item = document.createElement('ul');
+  notes.forEach((note: any) => {
+    const item = document.createElement('li');
     item.innerText = note.title;
     noteList.appendChild(item);
   });
@@ -118,15 +98,17 @@ addNote('TITLE', 'BODY\nLINE2').then(resp => {
 });
 */
 
-function getTitle() {
-  return document.getElementById('note-title-input').value;
+function getTitle(): string {
+  const titleInput: HTMLInputElement = document.getElementById('note-title-input') as HTMLInputElement;
+  return titleInput.value;
 }
 
-function getBody() {
-  return document.getElementById('note-body-input').textContent;
+function getBody(): string {
+  const bodyInput: HTMLTextAreaElement = document.getElementById('note-body-input') as HTMLTextAreaElement;
+  return bodyInput.textContent as string;
 }
 
-document.addEventListener('keydown', (e) => {
+document.addEventListener('keydown', (e: any) => {
   console.log(e);
   if (e.ctrlKey && (e.key === 's' || e.key === 'S')) {
     addNote(getTitle(), getBody());

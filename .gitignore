@@ -6,5 +6,7 @@ node_modules
 .DS_Store
 
 /app/main.js
+/app/renderer.js
+
 /app/**/*.js.map
 /src/**/*.d.ts

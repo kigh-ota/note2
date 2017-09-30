@@ -4,7 +4,7 @@ module.exports = [
     output: {
       filename: './app/main.js'
     },
-    devtool: 'source-map',
+    devtool: 'inline-source-map',
     resolve: {
       extensions: ['.ts', '.js']
     },
@@ -19,11 +19,11 @@ module.exports = [
     target: 'electron'
   },
   {
-    entry: './src/renderer.js',
+    entry: './src/renderer.ts',
     output: {
       filename: './app/renderer.js'
     },
-    devtool: 'source-map',
+    devtool: 'inline-source-map',
     resolve: {
       extensions: ['.ts', '.js']
     },
