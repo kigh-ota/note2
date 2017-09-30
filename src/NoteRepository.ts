@@ -38,7 +38,8 @@ export default class NoteRepository {
     });
   }
 
-  add(title: string, body: string): Promise<any> {
+  // returns id
+  add(title: string, body: string): Promise<string> {
     if (!title) {
       return Promise.reject('Invalid title');
     }
@@ -55,23 +56,22 @@ export default class NoteRepository {
       });
     }).then(resp => {
       console.log('Note added', resp);
-      return resp;
+      return resp.id;
     });
   }
 
-  /*
-  function updateNote(id: string, title: string, body: string): Promise<any> {
+  update(id: string, title: string, body: string): Promise<any> {
     if (!title) {
-      Promise.reject('Invalid title');
+      return Promise.reject('Invalid title');
     }
-    return Promise.all([db.get(id), getNoteByTitle(title)]).then((results) => {
-      const noteById = results[0];
-      const noteByTitle = results[1];
+    return Promise.all([this.db.get(id), this.getByTitle(title)]).then((results) => {
+      const noteById: any = results[0];
+      const noteByTitle: any = results[1];
       // comes here only when note with id was found
       if (noteByTitle !== null && noteByTitle._id !== id) {
         return Promise.reject(`Note with title "${title}" already exists`);
       }
-      return db.put({
+      return this.db.put({
         _id: id,
         _rev: noteById._rev,
         title,
@@ -84,5 +84,4 @@ export default class NoteRepository {
       }).catch(() => Promise.reject('Error in updating a note'));
     });
   }
-  */
 }

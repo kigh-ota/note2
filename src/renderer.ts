@@ -14,6 +14,11 @@ function clearNoteList(): void {
 
 let openedNoteId: string|null = null;
 
+function highlightOpenedNote(): void {
+  $(noteList).find('li').removeClass('opened-note');
+  $(noteList).find(`li[data-id=${openedNoteId}]`).addClass('opened-note');
+}
+
 function refreshNoteList(): Promise<any> {
   clearNoteList();
   return repository.getAll().then(notes => {
@@ -27,12 +32,12 @@ function refreshNoteList(): Promise<any> {
           titleInput.value = note.title;
           bodyInput.textContent = note.body;
           openedNoteId = note._id;
-          $(noteList).find('li').removeClass('opened-note');
-          item.classList.add('opened-note');
+          highlightOpenedNote();
           setStatusBar(`id: ${note._id}`);
         });
         noteList.appendChild(item);
       });
+    highlightOpenedNote();
   });
 }
 
@@ -52,8 +57,19 @@ function registerKeyEventHandler(): void {
   document.addEventListener('keydown', (e: KeyboardEvent) => {
     console.log(e);
     if (e.ctrlKey && (e.key === 's' || e.key === 'S')) {
-      repository.add(getTitle(), getBody());
+      if (openedNoteId === null) {
+        return repository.add(getTitle(), getBody()).then(id => {
+          openedNoteId = id;
+        }).then(() => {
+          return refreshNoteList();
+        });
+      }
+      // TODO prevent updating when not modified
+      return repository.update(openedNoteId, getTitle(), getBody()).then(() => {
+        return refreshNoteList();
+      });
     }
+    return;
   });
 }
 
