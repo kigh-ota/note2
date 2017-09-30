@@ -111,7 +111,24 @@ getAllNotes().then(notes => {
   });
 });
 
+/*
 addNote('TITLE', 'BODY\nLINE2').then(resp => {
   const id = resp.id;
   return updateNote(id, 'TITLE', 'BODY\nLINE2');
+});
+*/
+
+function getTitle() {
+  return document.getElementById('note-title-input').value;
+}
+
+function getBody() {
+  return document.getElementById('note-body-input').textContent;
+}
+
+document.addEventListener('keydown', (e) => {
+  console.log(e);
+  if (e.ctrlKey && (e.key === 's' || e.key === 'S')) {
+    addNote(getTitle(), getBody());
+  }
 });
