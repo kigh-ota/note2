@@ -108,6 +108,9 @@ function getBody(): string {
   return bodyInput.textContent as string;
 }
 
+const statusBar: HTMLElement = document.getElementById('status-bar-inner') as HTMLElement;
+statusBar.innerText = 'This is status bar';
+
 document.addEventListener('keydown', (e: any) => {
   console.log(e);
   if (e.ctrlKey && (e.key === 's' || e.key === 'S')) {

@@ -78,3 +78,13 @@ li {
     border: none;
     resize: none;
 }
+
+#status-bar {
+    height: 20px;
+    background-color: lightgray;
+}
+
+#status-bar-inner {
+    display: inline;
+    vertical-align: middle;
+}
