@@ -13,6 +13,10 @@ export default class NoteRepository {
     });
   }
 
+  get(id: string): Promise<any> {
+    return this.db.get(id);
+  }
+
   /**
    * returns null when a note is not found
    */

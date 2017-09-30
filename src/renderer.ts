@@ -57,7 +57,10 @@ export function saveNote(): Promise<any> {
       return Promise.resolve();
     }
     return repository.add(title, body).then(id => {
-      openedNoteId = id;
+      return repository.get(id);
+    }).then(note => {
+      changeOpenedNote(note);
+      return;
     });
   }
   // TODO prevent updating when not modified
@@ -69,11 +72,15 @@ function registerKeyEventHandler(): void {
   document.addEventListener('keydown', (e: KeyboardEvent) => {
     console.log(e);
     if (e.ctrlKey && (e.key === 's' || e.key === 'S')) {
-      saveNote().then(() => {
-        noteList.refresh();
+      return saveNote().then(() => {
+        return noteList.refresh();
+      });
+    } else if (e.ctrlKey && (e.key === 'n' || e.key === 'N')) {
+      return saveNote().then(() => {
+        changeOpenedNote(null);
+        return noteList.refresh();
       });
     }
-    // TODO: Press Ctrl+N to create a new note
     return;
   });
 }
