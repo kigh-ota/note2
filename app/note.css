@@ -26,6 +26,11 @@ li {
     margin: 0;
 }
 
+li:hover {
+    cursor: pointer;
+    background-color: lightskyblue;
+}
+
 #container {
     display: flex;
     height: 100%;

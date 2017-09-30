@@ -8,5 +8,5 @@ node_modules
 /app/main.js
 /app/renderer.js
 
-/app/**/*.js.map
-/src/**/*.d.ts
+*.js.map
+*.d.ts

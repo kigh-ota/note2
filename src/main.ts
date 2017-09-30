@@ -12,7 +12,6 @@ const createWindow = () => {
   });
 
   // and load the index.html of the app.
-  console.log(app.getAppPath() + '/app/index.html');
   mainWindow.loadURL('file://' + app.getAppPath() + '/app/index.html');
 
   // Open the DevTools.

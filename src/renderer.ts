@@ -82,11 +82,19 @@ function updateNote(id: string, title: string, body: string): Promise<any> {
 }
 */
 
+const titleInput: HTMLInputElement = document.getElementById('note-title-input') as HTMLInputElement;
+const bodyInput: HTMLTextAreaElement = document.getElementById('note-body-input') as HTMLTextAreaElement;
+
 const noteList: HTMLUListElement = document.querySelector('#note-list > ul') as HTMLUListElement;
 getAllNotes().then(notes => {
   notes.forEach((note: any) => {
-    const item = document.createElement('li');
+    const item: HTMLLIElement = document.createElement('li') as HTMLLIElement;
     item.innerText = note.title;
+    item.addEventListener('click', () => {
+      titleInput.value = note.title;
+      bodyInput.textContent = note.body;
+      statusBar.innerText = `id: ${note._id}`;
+    });
     noteList.appendChild(item);
   });
 });
@@ -99,12 +107,10 @@ addNote('TITLE', 'BODY\nLINE2').then(resp => {
 */
 
 function getTitle(): string {
-  const titleInput: HTMLInputElement = document.getElementById('note-title-input') as HTMLInputElement;
   return titleInput.value;
 }
 
 function getBody(): string {
-  const bodyInput: HTMLTextAreaElement = document.getElementById('note-body-input') as HTMLTextAreaElement;
   return bodyInput.textContent as string;
 }
 
