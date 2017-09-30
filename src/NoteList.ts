@@ -1,4 +1,4 @@
-import {changeOpenedNote, getOpenedNoteId, getRepository} from './renderer';
+import {changeOpenedNote, getOpenedNoteId, getRepository, saveNote} from './renderer';
 import * as $ from 'jquery';
 
 export default class NoteList {
@@ -23,10 +23,14 @@ export default class NoteList {
       const sortedNotes = notes.sort((a: any, b: any) => a.updatedAt > b.updatedAt ? -1 : 1);
       sortedNotes.forEach((note: any) => {
         const item = $('<li></li>').text(note.title);
-        item.data('id', note._id);
+        item.attr('data-id', note._id);
         item.on('click', () => {
-          changeOpenedNote(note);
-          this.highlightOpenedNote();
+          return saveNote().then(() => {
+            return this.refresh();
+          }).then(() => {
+            changeOpenedNote(note);
+            this.highlightOpenedNote();
+          });
         });
         item.appendTo(this.el);
       });

@@ -49,20 +49,28 @@ function setStatusBar(text: string): void {
   statusBar.innerText = text;
 }
 
+export function saveNote(): Promise<any> {
+  const title = getTitle();
+  const body = getBody();
+  if (openedNoteId === null) {
+    if (title === '' && body === '') {
+      return Promise.resolve();
+    }
+    return repository.add(title, body).then(id => {
+      openedNoteId = id;
+    });
+  }
+  // TODO prevent updating when not modified
+  console.log(title, body);
+  return repository.update(openedNoteId, title, body);
+}
+
 function registerKeyEventHandler(): void {
   document.addEventListener('keydown', (e: KeyboardEvent) => {
     console.log(e);
     if (e.ctrlKey && (e.key === 's' || e.key === 'S')) {
-      if (openedNoteId === null) {
-        return repository.add(getTitle(), getBody()).then(id => {
-          openedNoteId = id;
-        }).then(() => {
-          return noteList.refresh();
-        });
-      }
-      // TODO prevent updating when not modified
-      return repository.update(openedNoteId, getTitle(), getBody()).then(() => {
-        return noteList.refresh();
+      saveNote().then(() => {
+        noteList.refresh();
       });
     }
     // TODO: Press Ctrl+N to create a new note
