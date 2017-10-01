@@ -2,8 +2,11 @@ import NoteRepository from './NoteRepository';
 import * as $ from 'jquery';
 import NoteList from './NoteList';
 import NoteBodyInput from './NoteBodyInput';
+import NoteTitleInput from './NoteTitleInput';
+import StatusBar from './StatusBar';
 
 // TODO: filtering
+// TODO: preserve window size
 
 const repository: NoteRepository = new NoteRepository();
 
@@ -11,46 +14,57 @@ export function getRepository(): NoteRepository {
   return repository;
 }
 
-const titleInput: HTMLInputElement = document.getElementById('note-title-input') as HTMLInputElement;
-const bodyInput: NoteBodyInput = new NoteBodyInput();
 const deleteButton: JQuery = $('#note-delete-button');
-const statusBar: HTMLElement = document.getElementById('status-bar-inner') as HTMLElement;
-
-const noteList: NoteList =  new NoteList();
 
 let openedNoteId: string|null = null;
+let originalNote: {title: string, body: string} = {title: '', body: ''};
 
 export function getOpenedNoteId(): string|null {
   return openedNoteId;
+}
+
+const noteList: NoteList =  new NoteList();
+const titleInput: NoteTitleInput = new NoteTitleInput();
+const bodyInput: NoteBodyInput = new NoteBodyInput();
+
+function updateOriginalNote(): void {
+  originalNote = {
+    title: titleInput.getValue(),
+    body: bodyInput.getValue(),
+  };
+}
+
+export function isNoteModified(): boolean {
+  return originalNote.title !== titleInput.getValue() || originalNote.body !== bodyInput.getValue();
+}
+
+const statusBar: StatusBar = new StatusBar();
+
+export function getStatusBar(): StatusBar {
+  return statusBar;
 }
 
 // open a new note when note parameter is null
 export function changeOpenedNote(note: any): void {
   if (note !== null) {
     openedNoteId = note._id;
-    titleInput.value = note.title;
+    titleInput.setValue(note.title);
     bodyInput.setValue(note.body);
+    updateOriginalNote();
     deleteButton.show();
-    setStatusBar(`id: ${note._id}`);
+    statusBar.update(`id: ${note._id}`);
   } else {
     openedNoteId = null;
-    titleInput.value = '';
+    titleInput.setValue('');
     bodyInput.setValue('');
+    updateOriginalNote();
     deleteButton.hide();
-    setStatusBar('New Note');
+    statusBar.update('New Note');
   }
 }
 
-function getTitle(): string {
-  return titleInput.value;
-}
-
-function setStatusBar(text: string): void {
-  statusBar.innerText = text;
-}
-
 export function saveNote(): Promise<any> {
-  const title = getTitle();
+  const title = titleInput.getValue();
   const body = bodyInput.getValue();
   if (openedNoteId === null) {
     if (title === '' && body === '') {
@@ -65,7 +79,9 @@ export function saveNote(): Promise<any> {
   }
   // TODO prevent updating when not modified
   console.log(title, body);
-  return repository.update(openedNoteId, title, body);
+  return repository.update(openedNoteId, title, body).then(() => {
+    updateOriginalNote();
+  });
 }
 
 function registerKeyEventHandler(): void {
@@ -78,6 +94,7 @@ function registerKeyEventHandler(): void {
     } else if (e.ctrlKey && (e.key === 'n' || e.key === 'N')) {
       return saveNote().then(() => {
         changeOpenedNote(null);
+        titleInput.focus();
         return noteList.refresh();
       });
     }
@@ -93,6 +110,7 @@ function setupNoteDeleteButton(): void {
       }
       return repository.remove(openedNoteId).then(() => {
         changeOpenedNote(null);
+        titleInput.focus();
         return noteList.refresh();
       });
     }
@@ -102,5 +120,6 @@ function setupNoteDeleteButton(): void {
 
 registerKeyEventHandler();
 changeOpenedNote(null);
+titleInput.focus();
 noteList.refresh();
 setupNoteDeleteButton();

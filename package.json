@@ -7,6 +7,7 @@
     "lint": "tslint --project tsconfig.json --type-check --force",
     "build": "webpack --colors",
     "start": "electron .",
+    "buildAndStart": "npm run build && npm run start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
