@@ -45,6 +45,11 @@ export default class NoteBodyInput {
     return parseInt(this.el.prop('selectionEnd') as string);
   }
 
+  private update(value: string, selectionStart: number, selectionEnd: number): void {
+    this.setValue(value);
+    this.setSelection(selectionStart, selectionEnd);
+  }
+
   private handleTabKeyDown(e: KeyboardEvent) {
     e.preventDefault();
     const posStart = this.getSelectionStart();
@@ -52,14 +57,12 @@ export default class NoteBodyInput {
     if (posStart !== posEnd) {
       // text selected
       const ret = StringUtil.increaseIndentRange(this.getValue(), posStart, posEnd);
-      this.setValue(ret.updated);
-      this.setSelection(posStart + ret.numAddStart, posEnd + ret.numAddEnd);
+      this.update(ret.updated, posStart + ret.numAddStart, posEnd + ret.numAddEnd);
     } else {
       // no text selected
       const pos = posStart;
       const ret = StringUtil.increaseIndent(this.getValue(), pos);
-      this.setValue(ret.updated);
-      this.setSelection(pos + ret.numAdd, pos + ret.numAdd);
+      this.update(ret.updated, pos + ret.numAdd, pos + ret.numAdd);
     }
   }
 
@@ -70,8 +73,7 @@ export default class NoteBodyInput {
     if (posStart !== posEnd) {
       // text selected
       const ret = StringUtil.decreaseIndentRange(this.getValue(), posStart, posEnd);
-      this.setValue(ret.updated);
-      this.setSelection(posStart - ret.numRemoveStart, posEnd - ret.numRemoveStart);
+      this.update(ret.updated, posStart - ret.numRemoveStart, posEnd - ret.numRemoveStart);
     } else {
       // no text selected
       this.unindent(posStart);
@@ -108,37 +110,38 @@ export default class NoteBodyInput {
       e.preventDefault();
       this.removeBullet(pos, line);
     } else if (line.col >= line.indent + line.bullet.length) {
-      // when the cursor is after the indent and bullet (if exists)
-      // => continues indent and bullet (if exists)
+      // when the cursor is after the indent (and bullet)
       e.preventDefault();
-      const strInsert: string = '\n' + ' '.repeat(line.indent) + line.bullet;
-      this.insert(strInsert, pos);
+      this.newLineWithIndentAndBullet(pos, line);
     } else if (line.bullet && line.col === line.indent) {
       // when the cursor is between indent and bullet
-      // => continues only the indent
       e.preventDefault();
-      const strInsert: string = '\n' + ' '.repeat(line.indent);
-      this.insert(strInsert, pos);
+      this.newLineWithIndent(pos, line);
     }
+  }
+
+  private newLineWithIndentAndBullet(pos: number, line: LineInfo) {
+    this.insert('\n' + ' '.repeat(line.indent) + line.bullet, pos);
+  }
+
+  private newLineWithIndent(pos: number, line: LineInfo) {
+    this.insert('\n' + ' '.repeat(line.indent), pos);
   }
 
   private unindent(pos: number): void {
     const ret = StringUtil.decreaseIndent(this.getValue(), pos);
-    this.setValue(ret.updated);
-    this.setSelection(pos - ret.numRemove, pos - ret.numRemove);
+    this.update(ret.updated, pos - ret.numRemove, pos - ret.numRemove);
   }
 
   private removeBullet(pos: number, line: LineInfo): void {
     const value = this.getValue();
     const newValue = value.substring(0, pos - line.bullet.length) + value.substring(pos);
-    this.setValue(newValue);
-    this.setSelection(pos - line.bullet.length, pos - line.bullet.length);
+    this.update(newValue, pos - line.bullet.length, pos - line.bullet.length);
   }
 
   private insert(str: string, pos: number): void {
     const value = this.getValue();
-    const newValue: string = value.substring(0, pos) + str + value.substring(pos);
-    this.setValue(newValue);
-    this.setSelection(pos + str.length, pos + str.length);
+    const newValue = value.substring(0, pos) + str + value.substring(pos);
+    this.update(newValue, pos + str.length, pos + str.length);
   }
 }

@@ -3,7 +3,6 @@ import * as $ from 'jquery';
 import NoteList from './NoteList';
 import NoteBodyInput from './NoteBodyInput';
 
-// TODO: improve editor
 // TODO: filtering
 
 const repository: NoteRepository = new NoteRepository();
