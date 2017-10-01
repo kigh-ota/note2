@@ -1,6 +1,10 @@
 import NoteRepository from './NoteRepository';
 import * as $ from 'jquery';
 import NoteList from './NoteList';
+import NoteBodyInput from './NoteBodyInput';
+
+// TODO: improve editor
+// TODO: filtering
 
 const repository: NoteRepository = new NoteRepository();
 
@@ -9,10 +13,11 @@ export function getRepository(): NoteRepository {
 }
 
 const titleInput: HTMLInputElement = document.getElementById('note-title-input') as HTMLInputElement;
-const bodyInput: HTMLTextAreaElement = document.getElementById('note-body-input') as HTMLTextAreaElement;
+const bodyInput: NoteBodyInput = new NoteBodyInput();
 const deleteButton: JQuery = $('#note-delete-button');
-const noteList: NoteList =  new NoteList();
 const statusBar: HTMLElement = document.getElementById('status-bar-inner') as HTMLElement;
+
+const noteList: NoteList =  new NoteList();
 
 let openedNoteId: string|null = null;
 
@@ -25,13 +30,13 @@ export function changeOpenedNote(note: any): void {
   if (note !== null) {
     openedNoteId = note._id;
     titleInput.value = note.title;
-    bodyInput.textContent = note.body;
+    bodyInput.setValue(note.body);
     deleteButton.show();
     setStatusBar(`id: ${note._id}`);
   } else {
     openedNoteId = null;
     titleInput.value = '';
-    bodyInput.textContent = '';
+    bodyInput.setValue('');
     deleteButton.hide();
     setStatusBar('New Note');
   }
@@ -41,17 +46,13 @@ function getTitle(): string {
   return titleInput.value;
 }
 
-function getBody(): string {
-  return bodyInput.textContent as string;
-}
-
 function setStatusBar(text: string): void {
   statusBar.innerText = text;
 }
 
 export function saveNote(): Promise<any> {
   const title = getTitle();
-  const body = getBody();
+  const body = bodyInput.getValue();
   if (openedNoteId === null) {
     if (title === '' && body === '') {
       return Promise.resolve();
