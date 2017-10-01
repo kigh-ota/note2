@@ -1,5 +1,5 @@
 import * as $ from 'jquery';
-import StringUtil from './StringUtil';
+import StringUtil, {LineInfo} from './StringUtil';
 
 export default class NoteBodyInput {
   private el: JQuery;
@@ -14,6 +14,12 @@ export default class NoteBodyInput {
         this.handleTabKeyDown(e);
       } else if (e.key === 'Backspace') {
         this.handleBackspaceKeyDown(e);
+      }
+    });
+
+    this.el.keypress((e: any) => {
+      if (e.key === 'Enter') {
+        this.handleEnterKeyPress(e);
       }
     });
   }
@@ -85,9 +91,54 @@ export default class NoteBodyInput {
     }
   }
 
+  private handleEnterKeyPress(e: KeyboardEvent) {
+    const posStart = this.getSelectionStart();
+    const posEnd = this.getSelectionEnd();
+    if (posStart !== posEnd) {
+      return;
+    }
+    const pos = posStart;
+    const line = StringUtil.getLineInfo(pos, this.getValue());
+    if (line.col === line.str.length && line.indent > 0 && line.str.length === line.indent) {
+      // when there's indent only and the cursor is at the end of line
+      e.preventDefault();
+      this.unindent(pos);
+    } else if (line.bullet && line.str.length === line.indent + line.bullet.length && line.str.length === line.indent) {
+      // when there's indent and bullet only and the cursor is at the end of line
+      e.preventDefault();
+      this.removeBullet(pos, line);
+    } else if (line.col >= line.indent + line.bullet.length) {
+      // when the cursor is after the indent and bullet (if exists)
+      // => continues indent and bullet (if exists)
+      e.preventDefault();
+      const strInsert: string = '\n' + ' '.repeat(line.indent) + line.bullet;
+      this.insert(strInsert, pos);
+    } else if (line.bullet && line.col === line.indent) {
+      // when the cursor is between indent and bullet
+      // => continues only the indent
+      e.preventDefault();
+      const strInsert: string = '\n' + ' '.repeat(line.indent);
+      this.insert(strInsert, pos);
+    }
+  }
+
   private unindent(pos: number): void {
     const ret = StringUtil.decreaseIndent(this.getValue(), pos);
     this.setValue(ret.updated);
     this.setSelection(pos - ret.numRemove, pos - ret.numRemove);
+  }
+
+  private removeBullet(pos: number, line: LineInfo): void {
+    const value = this.getValue();
+    const newValue = value.substring(0, pos - line.bullet.length) + value.substring(pos);
+    this.setValue(newValue);
+    this.setSelection(pos - line.bullet.length, pos - line.bullet.length);
+  }
+
+  private insert(str: string, pos: number): void {
+    const value = this.getValue();
+    const newValue: string = value.substring(0, pos) + str + value.substring(pos);
+    this.setValue(newValue);
+    this.setSelection(pos + str.length, pos + str.length);
   }
 }
