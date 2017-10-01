@@ -8,6 +8,8 @@ node_modules
 /app/main.js
 /app/renderer.js
 
+/dbconfig.json
+
 /src/**/*.js
 
 *.js.map
