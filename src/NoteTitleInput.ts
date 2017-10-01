@@ -1,5 +1,5 @@
 import * as $ from 'jquery';
-import {getStatusBar} from './renderer';
+import {noteApp} from './renderer';
 
 export default class NoteTitleInput {
   private el: JQuery;
@@ -8,11 +8,11 @@ export default class NoteTitleInput {
     this.el = $('#note-title-input');
 
     this.el.keyup(() => {
-      getStatusBar().update();
+      noteApp.statusBar.update();
     });
 
     this.el.change(() => {
-      getStatusBar().update();
+      noteApp.statusBar.update();
     });
   }
 

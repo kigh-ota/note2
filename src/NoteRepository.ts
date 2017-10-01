@@ -1,22 +1,25 @@
 import PouchDB from 'pouchdb';
 import * as fs from 'fs';
 
+const DBCONFIG_JSON = './dbconfig.json';
+const DEFAULT_DB_URL = 'http://localhost:5984/note2';
+
 export default class NoteRepository {
   private db: PouchDB.Database;
 
   constructor() {
     let dbconfig: any = null;
     try {
-      const buffer = fs.readFileSync('./dbconfig.json');
+      const buffer = fs.readFileSync(DBCONFIG_JSON);
       dbconfig = JSON.parse(buffer.toString());
     } catch {
-      console.log('dbconfig.json not found; fall back to default');
+      console.log(`${DBCONFIG_JSON} not found; fall back to default`);
     }
     if (dbconfig !== null) {
-      console.log(dbconfig);
+      console.log(`loaded ${DBCONFIG_JSON}: url = ${dbconfig.url}`);
       this.db = new PouchDB(dbconfig.url, { auth: {username: dbconfig.username, password: dbconfig.password }});
     } else {
-      this.db = new PouchDB('http://localhost:5984/note2');
+      this.db = new PouchDB(DEFAULT_DB_URL);
     }
   }
 

@@ -1,5 +1,5 @@
 import * as $ from 'jquery';
-import {isNoteModified} from './renderer';
+import {noteApp} from './renderer';
 
 export default class StatusBar {
   private el: JQuery;
@@ -8,11 +8,10 @@ export default class StatusBar {
   constructor() {
     this.el = $('#status-bar-inner');
     this.body = '';
-    this.update();
   }
 
   public update(text?: string) {
-    const modified = isNoteModified();
+    const modified = noteApp.isNoteModified();
     if (typeof text !== 'undefined') {
       this.body = text;
     }
