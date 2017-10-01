@@ -1,5 +1,6 @@
 import * as $ from 'jquery';
 import StringUtil, {LineInfo} from './StringUtil';
+import {getStatusBar} from './renderer';
 
 export default class NoteBodyInput {
   private el: JQuery;
@@ -21,6 +22,15 @@ export default class NoteBodyInput {
       if (e.key === 'Enter') {
         this.handleEnterKeyPress(e);
       }
+      getStatusBar().update();
+    });
+
+    this.el.keyup(() => {
+      getStatusBar().update();
+    });
+
+    this.el.change(() => {
+      getStatusBar().update();
     });
   }
 
