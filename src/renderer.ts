@@ -66,10 +66,11 @@ export function changeOpenedNote(note: any): void {
 export function saveNote(): Promise<any> {
   const title = titleInput.getValue();
   const body = bodyInput.getValue();
+  if (!isNoteModified()) {
+    // do nothing
+    return Promise.resolve();
+  }
   if (openedNoteId === null) {
-    if (title === '' && body === '') {
-      return Promise.resolve();
-    }
     return repository.add(title, body).then(id => {
       return repository.get(id);
     }).then(note => {
@@ -77,8 +78,6 @@ export function saveNote(): Promise<any> {
       return;
     });
   }
-  // TODO prevent updating when not modified
-  console.log(title, body);
   return repository.update(openedNoteId, title, body).then(() => {
     updateOriginalNote();
   });
