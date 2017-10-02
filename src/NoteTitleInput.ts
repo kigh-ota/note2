@@ -7,11 +7,7 @@ export default class NoteTitleInput {
   constructor() {
     this.el = $('#note-title-input');
 
-    this.el.keyup(() => {
-      noteApp.statusBar.update();
-    });
-
-    this.el.change(() => {
+    this.el.on('input', () => {
       noteApp.statusBar.update();
     });
   }

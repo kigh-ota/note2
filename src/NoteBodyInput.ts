@@ -24,16 +24,15 @@ export default class NoteBodyInput {
       }
     });
 
-    this.el.keyup(() => {
-      this.handleChangeValue();
-    });
-
-    this.el.change(() => {
+    this.el.on('input', () => {
       this.handleChangeValue();
     });
   }
 
   private handleChangeValue() {
+    // replace a full-width space with two half-width spaces
+    this.setValue(this.getValue().replace('　', '  '), true);
+
     noteApp.statusBar.update();
     noteApp.infoBar.update(this.getTags(), this.getUrls());
   }
@@ -46,9 +45,11 @@ export default class NoteBodyInput {
     return StringUtil.getUrls(this.getValue());
   }
 
-  public setValue(value: string): void {
+  public setValue(value: string, ignoreHandler?: boolean): void {
     this.el.val(value);
-    this.handleChangeValue();
+    if (!ignoreHandler) {
+      this.handleChangeValue();
+    }
   }
 
   public getValue(): string {
