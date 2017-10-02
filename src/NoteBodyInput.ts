@@ -22,20 +22,29 @@ export default class NoteBodyInput {
       if (e.key === 'Enter') {
         this.handleEnterKeyPress(e);
       }
-      noteApp.statusBar.update();
     });
 
     this.el.keyup(() => {
-      noteApp.statusBar.update();
+      this.handleChangeValue();
     });
 
     this.el.change(() => {
-      noteApp.statusBar.update();
+      this.handleChangeValue();
     });
+  }
+
+  private handleChangeValue() {
+    noteApp.statusBar.update();
+    noteApp.infoBar.showTags(this.getTags());
+  }
+
+  private getTags(): Set<string> {
+    return StringUtil.getTags(this.getValue());
   }
 
   public setValue(value: string): void {
     this.el.val(value);
+    this.handleChangeValue();
   }
 
   public getValue(): string {

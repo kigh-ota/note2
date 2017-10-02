@@ -4,6 +4,7 @@ import NoteBodyInput from './NoteBodyInput';
 import NoteTitleInput from './NoteTitleInput';
 import StatusBar from './StatusBar';
 import NoteRepository from './NoteRepository';
+import InfoBar from './InfoBar';
 
 export default class App {
 
@@ -11,6 +12,7 @@ export default class App {
 
   noteList: NoteList;
   titleInput: NoteTitleInput;
+  infoBar: InfoBar;
   bodyInput: NoteBodyInput;
   statusBar: StatusBar;
   deleteButton: JQuery;
@@ -23,6 +25,7 @@ export default class App {
 
     this.noteList = new NoteList();
     this.titleInput = new NoteTitleInput();
+    this.infoBar = new InfoBar();
     this.bodyInput = new NoteBodyInput();
     this.statusBar = new StatusBar();
     this.deleteButton = $('#note-delete-button');

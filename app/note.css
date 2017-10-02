@@ -82,9 +82,19 @@ li.opened-note {
     bottom: 0;
 }
 
-#note-tags {
+#info-bar {
     height: 40px;
     background-color: lightgray;
+    display: flex;
+    /*justify-content: center;*/
+    align-items: center;
+}
+
+span.tag {
+    margin: 0 0 0 8px;
+    padding: 4px;
+    background-color: antiquewhite;
+    border-radius: 4px;
 }
 
 #note-body {

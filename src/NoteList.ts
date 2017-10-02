@@ -1,4 +1,3 @@
-///<reference path="renderer.ts"/>
 import * as $ from 'jquery';
 import {noteApp} from './renderer';
 

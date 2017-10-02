@@ -62,6 +62,20 @@ export default class StringUtil {
       numRemoveEnd: ret.diffEnd,
     };
   }
+
+  public static getTags(text: string): Set<string> {
+     return new Set(
+        text
+          .split('\n')
+          .filter(line => {
+            return line.match(/^#\S+$/);
+          }).map(line => {
+          return line.substring(1);
+        }).filter(tag => {
+          return !tag.includes('#');
+        })
+      );
+  }
 }
 
 export interface LineInfo {
