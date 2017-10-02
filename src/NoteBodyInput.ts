@@ -35,11 +35,15 @@ export default class NoteBodyInput {
 
   private handleChangeValue() {
     noteApp.statusBar.update();
-    noteApp.infoBar.showTags(this.getTags());
+    noteApp.infoBar.update(this.getTags(), this.getUrls());
   }
 
   private getTags(): Set<string> {
     return StringUtil.getTags(this.getValue());
+  }
+
+  private getUrls(): Set<string> {
+    return StringUtil.getUrls(this.getValue());
   }
 
   public setValue(value: string): void {

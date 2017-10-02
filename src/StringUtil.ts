@@ -76,6 +76,18 @@ export default class StringUtil {
         })
       );
   }
+
+  public static getUrls(text: string): Set<string> {
+    return new Set(
+      text
+        .split('\n')
+        .filter(line => {
+          return line.match(/^\s*http(s)?:\/\/[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/);
+        }).map(urlWithSpace => {
+          return urlWithSpace.trim();
+        })
+    );
+  }
 }
 
 export interface LineInfo {

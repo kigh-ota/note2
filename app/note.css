@@ -90,11 +90,19 @@ li.opened-note {
     align-items: center;
 }
 
-span.tag {
+#info-bar span.tag {
     margin: 0 0 0 8px;
     padding: 4px;
     background-color: antiquewhite;
     border-radius: 4px;
+}
+
+#info-bar span.url {
+    margin: 0 0 0 8px;
+    padding: 4px;
+    background-color: peachpuff;
+    border-radius: 0;
+    cursor: pointer;
 }
 
 #note-body {
