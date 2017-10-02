@@ -129,7 +129,7 @@ export default class NoteBodyInput {
       // when there's indent only and the cursor is at the end of line
       e.preventDefault();
       this.unindent(pos);
-    } else if (line.bullet && line.str.length === line.indent + line.bullet.length && line.str.length === line.indent) {
+    } else if (line.bullet && line.str.length === line.indent + line.bullet.length) {
       // when there's indent and bullet only and the cursor is at the end of line
       e.preventDefault();
       this.removeBullet(pos, line);
