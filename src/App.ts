@@ -5,11 +5,13 @@ import NoteTitleInput from './NoteTitleInput';
 import StatusBar from './StatusBar';
 import NoteRepository from './NoteRepository';
 import InfoBar from './InfoBar';
+import NoteFilterInput from './NoteFilterInput';
 
 export default class App {
 
   repository: NoteRepository;
 
+  filterInput: NoteFilterInput;
   noteList: NoteList;
   titleInput: NoteTitleInput;
   infoBar: InfoBar;
@@ -23,6 +25,7 @@ export default class App {
   constructor() {
     this.repository = new NoteRepository();
 
+    this.filterInput = new NoteFilterInput;
     this.noteList = new NoteList();
     this.titleInput = new NoteTitleInput();
     this.infoBar = new InfoBar();
