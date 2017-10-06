@@ -36,6 +36,7 @@ export default class NoteList {
       sortedNotes.forEach((note: any) => {
         const item = $('<li></li>').text(note.title);
         item.attr('data-id', note._id);
+        item.attr('title', this.getNoteToolTip(note));
         item.on('click', () => {
           return noteApp.saveNote().then(() => {
             return this.refresh();
@@ -48,5 +49,9 @@ export default class NoteList {
       });
       this.highlightOpenedNote();
     });
+  }
+
+  private getNoteToolTip(note: any) {
+    return `${note.title}\n id: ${note._id}\n createdAt: ${note.createdAt}\n updatedAt: ${note.updatedAt}`;
   }
 }
