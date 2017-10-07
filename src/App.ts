@@ -47,6 +47,7 @@ export default class App {
       // console.log(e);
       if (e.ctrlKey && (e.key === 's' || e.key === 'S')) {
         return this.saveNote().then(() => {
+          this.statusBar.update();
           return this.noteList.refresh();
         });
       } else if (e.ctrlKey && (e.key === 'n' || e.key === 'N')) {
