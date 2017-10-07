@@ -5,7 +5,7 @@ const DBCONFIG_JSON = './dbconfig.json';
 const DEFAULT_DB_URL = 'http://localhost:5984/note2';
 
 export default class NoteRepository {
-  private db: PouchDB.Database;
+  private db: any;
 
   constructor() {
     let dbconfig: any = null;
@@ -24,8 +24,8 @@ export default class NoteRepository {
   }
 
   getAll(): Promise<any> {
-    return this.db.allDocs({include_docs: true}).then((result) => {
-      return result.rows.map(row => row.doc);
+    return this.db.allDocs({include_docs: true}).then((result: any) => {
+      return result.rows.map((row: any) => row.doc);
     });
   }
 
@@ -40,7 +40,7 @@ export default class NoteRepository {
     if (!title) {
       return Promise.reject('Invalid title');
     }
-    return this.db.allDocs({include_docs: true}).then((result) => {
+    return this.db.allDocs({include_docs: true}).then((result: any) => {
       const matchRow = result.rows.find((row: any) => row.doc.title === title);
       if (matchRow === undefined) {
         return null;
@@ -98,7 +98,7 @@ export default class NoteRepository {
         body,
         createdAt: noteById.createdAt,
         updatedAt: new Date().toISOString(),
-      }).then(resp => {
+      }).then((resp: any) => {
         console.log('Note updated', resp);
         return resp;
       }).catch(() => Promise.reject('Error in updating a note'));
@@ -106,7 +106,7 @@ export default class NoteRepository {
   }
 
   remove(id: string): Promise<any> {
-    return this.db.get(id).then(note => {
+    return this.db.get(id).then((note: any) => {
       return this.db.remove(id, note._rev);
     }).catch(() => {
       return Promise.reject('Note not found');

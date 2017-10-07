@@ -16,7 +16,8 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "pretty": true,
-    "target": "es2015"
+    "target": "es2015",
+    "allowSyntheticDefaultImports": true
   },
   "formatCodeOptions": {
     "indentSize": 2,
