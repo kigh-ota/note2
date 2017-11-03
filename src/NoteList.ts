@@ -4,9 +4,20 @@ import StringUtil from './StringUtil';
 
 export default class NoteList {
   private el: JQuery;
+  private sortSwitcher: JQuery;
+  private isSortByTitle: boolean;
+  private sortKeyword: string;
 
   constructor() {
     this.el = $('#note-list').find('ul');
+    this.sortSwitcher = $('#note-sort-switcher');
+    this.isSortByTitle = false;
+    this.sortKeyword = '';
+
+    this.sortSwitcher.on('click', () => {
+      this.isSortByTitle = !this.isSortByTitle;
+      this.refresh();
+    });
   }
 
   private clear(): void {
@@ -19,20 +30,29 @@ export default class NoteList {
   }
 
   refresh(keyword?: string): Promise<any> {
+    if (typeof keyword !== 'undefined') {
+      this.sortKeyword = keyword;
+    }
     return noteApp.repository.getAll().then(notes => {
       this.clear();
       const sortedNotes = notes
         .filter((note: any) => {
-          if (!keyword) {
+          if (!this.sortKeyword) {
             // no filtering
             return true;
           }
-          const titleMatchWord = note.title.toLocaleLowerCase().indexOf(keyword.toLocaleLowerCase()) !== -1;
+          const titleMatchWord = note.title.toLocaleLowerCase().indexOf(this.sortKeyword.toLocaleLowerCase()) !== -1;
           const tagsMatchWord = Array.from(StringUtil.getTags(note.body))
-            .some(tag => tag.toLocaleLowerCase().indexOf(keyword.toLocaleLowerCase()) !== -1);
+            .some(tag => tag.toLocaleLowerCase().indexOf(this.sortKeyword.toLocaleLowerCase()) !== -1);
           return titleMatchWord || tagsMatchWord;
         })
-        .sort((a: any, b: any) => new Date(a.updatedAt).toISOString() > new Date(b.updatedAt).toISOString() ? -1 : 1);
+        .sort((a: any, b: any) => {
+          if (this.isSortByTitle) {
+            return a.title.toLowerCase() < b.title.toLowerCase() ? -1 : 1;
+          } else {
+            return new Date(a.updatedAt).toISOString() > new Date(b.updatedAt).toISOString() ? -1 : 1;
+          }
+        });
       sortedNotes.forEach((note: any) => {
         const item = $('<li></li>').text(note.title);
         item.attr('data-id', note._id);

@@ -28,9 +28,20 @@ div, input, textarea {
     flex-direction: column;
 }
 
+#note-filter {
+    position: relative;
+}
+
 #note-filter-input {
     width: 100%;
     height: 40px;
+}
+
+#note-sort-switcher {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
 }
 
 #note-list {
