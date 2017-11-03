@@ -32,7 +32,7 @@ export default class NoteList {
             .some(tag => tag.toLocaleLowerCase().indexOf(keyword.toLocaleLowerCase()) !== -1);
           return titleMatchWord || tagsMatchWord;
         })
-        .sort((a: any, b: any) => a.updatedAt > b.updatedAt ? -1 : 1);
+        .sort((a: any, b: any) => new Date(a.updatedAt).toISOString() > new Date(b.updatedAt).toISOString() ? -1 : 1);
       sortedNotes.forEach((note: any) => {
         const item = $('<li></li>').text(note.title);
         item.attr('data-id', note._id);
